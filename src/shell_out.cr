@@ -1,10 +1,9 @@
 
 
 def shell_out(raw_cmd)
-
   output = IO::Memory.new
   error  = IO::Memory.new
-  cmd = raw_cmd.split
+  cmd    = raw_cmd.split
 
   stat = Process.run(cmd.shift, cmd, output: output, error: error)
 
