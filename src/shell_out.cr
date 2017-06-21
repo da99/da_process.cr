@@ -10,12 +10,11 @@ def shell_out(raw_cmd)
   if !stat.success? || !error.empty? || !stat.normal_exit? || stat.signal_exit?
     STDERR.puts error.rewind.to_s
     STDERR.puts output.rewind.to_s
-    STDERR.puts stat.exit_code
-    STDERR.puts stat.exit_signal if stat.signal_exit?
+    STDERR.puts "Exit code:   #{stat.exit_code}"
+    STDERR.puts "Exit signal: #{stat.exit_signal}" if stat.signal_exit?
     Process.exit stat.exit_code
   end
 
   return output.rewind.to_s
-
 end # === def shell_out
 
