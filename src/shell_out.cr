@@ -1,11 +1,11 @@
 
 
-def shell_out(raw_cmd)
+def shell_out(raw_cmd, input : Nil | IO::Memory = nil)
   output = IO::Memory.new
   error  = IO::Memory.new
   cmd    = raw_cmd.split
 
-  stat = Process.run(cmd.shift, cmd, output: output, error: error)
+  stat = Process.run(cmd.shift, cmd, output: output, error: error, input: input)
 
   if !stat.success? || !error.empty? || !stat.normal_exit? || stat.signal_exit?
     STDERR.puts error.rewind.to_s
