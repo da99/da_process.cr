@@ -18,3 +18,16 @@ def shell_out(raw_cmd, input : Nil | IO::Memory = nil)
   return output.rewind.to_s
 end # === def shell_out
 
+def shell_out?(raw_cmd : String)
+  output = IO::Memory.new
+  error  = IO::Memory.new
+  cmd    = raw_cmd.split
+
+  stat = Process.run(cmd.shift, cmd, output: output, error: error)
+
+  if !stat.success? || !error.empty? || !stat.normal_exit? || stat.signal_exit?
+    return false
+  end
+
+  return true
+end # === def shell_out?
