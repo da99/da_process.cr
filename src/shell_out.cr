@@ -10,8 +10,11 @@ def shell_out(raw_cmd, args : Array(String), input : Nil | IO::Memory = nil)
 
   stat = Process.run(raw_cmd, args, output: output, error: error, input: input)
 
-  if !stat.success? || !error.empty? || !stat.normal_exit? || stat.signal_exit?
+  if !error.empty?
     STDERR.puts error.rewind.to_s
+  end
+
+  if !stat.success? || !stat.normal_exit? || stat.signal_exit?
     STDERR.puts output.rewind.to_s
     STDERR.puts "Exit code:   #{stat.exit_code}"
     STDERR.puts "Exit signal: #{stat.exit_signal}" if stat.signal_exit?
@@ -28,7 +31,7 @@ def shell_out?(raw_cmd : String)
 
   stat = Process.run(cmd.shift, cmd, output: output, error: error)
 
-  if !stat.success? || !error.empty? || !stat.normal_exit? || stat.signal_exit?
+  if !stat.success? || !stat.normal_exit? || stat.signal_exit?
     return false
   end
 

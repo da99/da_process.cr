@@ -9,6 +9,10 @@ describe ":shell_out (String, Array(String))" do
       .should eq(0)
   end # === it "works"
 
+  it "exits 0 even if STDERR has content" do
+    shell_out("bash specs/stderr.sh").should eq("done\n")
+  end # === it "exits 0 even if STDERR has content"
+
 end # === desc ":shell_out"
 describe ":shell_out (String)" do
 
