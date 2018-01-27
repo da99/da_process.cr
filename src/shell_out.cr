@@ -4,15 +4,10 @@ def shell_out(raw_cmd : String)
   shell_out(cmd.shift, cmd)
 end # === def shell_out
 
-def shell_out(raw_cmd, args : Array(String), input : Nil | IO::Memory = nil)
+def shell_out(raw_cmd, args : Array(String), input : IO::Memory = IO::Memory.new)
   output = IO::Memory.new
-  error  = IO::Memory.new
 
-  stat = Process.run(raw_cmd, args, output: output, error: error, input: input)
-
-  if !error.empty?
-    STDERR.puts error.rewind.to_s
-  end
+  stat = Process.run(raw_cmd, args, output: output, error: output, input: input)
 
   if !stat.success? || !stat.normal_exit? || stat.signal_exit?
     STDERR.puts output.rewind.to_s
@@ -26,10 +21,9 @@ end # === def shell_out
 
 def shell_out?(raw_cmd : String)
   output = IO::Memory.new
-  error  = IO::Memory.new
   cmd    = raw_cmd.split
 
-  stat = Process.run(cmd.shift, cmd, output: output, error: error)
+  stat = Process.run(cmd.shift, cmd, output: output, error: output)
 
   if !stat.success? || !stat.normal_exit? || stat.signal_exit?
     return false

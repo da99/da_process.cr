@@ -14,6 +14,7 @@ fi
 case "$ACTION" in
 
   run)
+    reset
     cd "$THIS_DIR"
     mkdir -p tmp/in tmp/out
     sh_color ORANGE "=== {{Compiling}}..."
