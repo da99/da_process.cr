@@ -1,4 +1,6 @@
 
+require "./shell_out/*"
+
 def shell_out(raw_cmd : String)
   cmd    = raw_cmd.split
   shell_out(cmd.shift, cmd)
@@ -31,3 +33,4 @@ def shell_out?(raw_cmd : String)
 
   return true
 end # === def shell_out?
+

@@ -1,3 +1,8 @@
 ---
 name: shell_out
 version: 0.3.2
+development_dependencies:
+  inspect_bang:
+    github: da99/inspect_bang.cr
+  da_spec:
+    github: da99/da_spec.cr

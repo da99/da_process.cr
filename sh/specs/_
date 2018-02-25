@@ -13,7 +13,19 @@ fi
 
 case "$ACTION" in
 
+  watch)
+    local +x CMD="shell_out.cr specs run"
+    ${=CMD} || :
+    process watch "-r ./" "$CMD"
+    ;;
+
   run)
+    case "${CHANGED_FILE:-}" in
+      */shard.yml)
+        my_crystal deps
+        ;;
+    esac
+
     reset
     cd "$THIS_DIR"
     mkdir -p tmp/in tmp/out
@@ -21,12 +33,7 @@ case "$ACTION" in
     my_crystal __ build specs/specs.cr -o tmp/out/specs
     sh_color ORANGE "=== {{Running}}..."
     tmp/out/specs
-    ;;
-
-  watch)
-    local +x CMD="shell_out specs run"
-    ${=CMD} || :
-    process watch "-r sh -r bin -r specs -r src" "$CMD"
+    sh_color GREEN "=== {{DONE}} ==="
     ;;
 
   *)
