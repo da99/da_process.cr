@@ -25,10 +25,8 @@ describe "Inotify_Wait" do
     files = [] of String
 
     spawn {
-      io_capture(STDERR) do |err_output|
-        inotifywait("-r #{folder}") do |change|
-          files << change.file_name
-        end
+      inotifywait("-r #{folder}", error: IO::Memory.new) do |change|
+        files << change.file_name
       end
     }
 

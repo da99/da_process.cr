@@ -17,12 +17,15 @@ class Inotify_Wait
 
   delegate :terminated?, to: @proc
 
-  def initialize(@cmd : String = "-m -r ./ -e close_write", &@blok : Proc(Change, Nil))
+  def initialize(@cmd : String = "-m -r ./ -e close_write", error = nil, &@blok : Proc(Change, Nil))
+
+    error = error || STDERR
+    error.puts "=== inotifywait #{@cmd}"
     @proc = Process.new(
       "inotifywait",
       @cmd.split,
       output: @out_io,
-      error: STDERR
+      error: error
     )
   end
 
@@ -103,10 +106,8 @@ class Inotify_Wait
 
 end # === class Inotify
 
-def inotifywait(*args, &blok : Proc(Inotify_Wait::Change, Nil))
-  i = Inotify_Wait.new(*args, &blok)
-
-  STDERR.puts "=== inotifywait #{i.cmd}"
+def inotifywait(*args, **named_args, &blok : Proc(Inotify_Wait::Change, Nil))
+  i = Inotify_Wait.new(*args, **named_args, &blok)
 
   Signal::INT.trap do
     i.kill unless i.terminated?
