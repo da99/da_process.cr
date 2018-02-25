@@ -18,7 +18,6 @@ class Inotify_Wait
   delegate :terminated?, to: @proc
 
   def initialize(@cmd : String = "-m -r ./ -e close_write", error = nil, &@blok : Proc(Change, Nil))
-
     error = error || STDERR
     error.puts "=== inotifywait #{@cmd}"
     @proc = Process.new(
