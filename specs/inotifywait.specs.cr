@@ -26,7 +26,7 @@ describe "Inotify_Wait" do
 
     spawn {
       io_capture(STDERR) do |err_output|
-        Inotify_Wait.loop("-r #{folder}") do |wait_proc, change|
+        inotifywait("-r #{folder}") do |change|
           files << change.file_name
         end
       end

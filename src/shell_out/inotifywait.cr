@@ -6,37 +6,18 @@ class Inotify_Wait
   # Class
   # =============================================================================
 
-  def self.loop(*args, &blok : Proc(Inotify_Wait, Change, Nil))
-    i = new(*args, &blok)
-
-    STDERR.puts "=== inotifywait #{i.cmd}"
-
-    Signal::INT.trap do
-      i.kill unless i.terminated?
-      Signal::INT.reset
-    end
-
-    while !i.terminated?
-      i.process_a_line
-      Fiber.yield
-    end
-
-    i.flush_remaining
-    i.exit_on_error
-  end
-
   # =============================================================================
   # Instance
   # =============================================================================
 
   getter proc   : Process
-  getter blok   : Proc(Inotify_Wait, Change, Nil)
+  getter blok   : Proc(Change, Nil)
   getter out_io : IO::Memory = IO::Memory.new
   getter cmd : String
 
   delegate :terminated?, to: @proc
 
-  def initialize(@cmd : String = "-m -r ./ -e close_write", &@blok : Proc(Inotify_Wait, Change, Nil))
+  def initialize(@cmd : String = "-m -r ./ -e close_write", &@blok : Proc(Change, Nil))
     @proc = Process.new(
       "inotifywait",
       @cmd.split,
@@ -48,7 +29,7 @@ class Inotify_Wait
   def kill
     unless proc.terminated?
       puts "=== killing process: #{proc.pid}"
-      proc.kill(Signal::INT) 
+      proc.kill(Signal::INT)
     end
   end
 
@@ -71,8 +52,8 @@ class Inotify_Wait
     if !out_io.empty?
       out_io.rewind
       out_io.each_line { |l|
-        change = Change.new(l)
-        @blok.call self, change
+        change = Change.new(self, l)
+        @blok.call change
       }
     end
 
@@ -89,9 +70,12 @@ class Inotify_Wait
     getter file_name  : String
     getter full_path  : String
     getter content    : String
+    getter process    : Inotify_Wait
+    getter line       : String
+
     @is_different : Bool
 
-    def initialize(line : String)
+    def initialize(@process, @line)
       pieces      = line.split
       if pieces.size != 3
         STDERR.puts line
@@ -118,5 +102,24 @@ class Inotify_Wait
   end # === struct Change
 
 end # === class Inotify
+
+def inotifywait(*args, &blok : Proc(Inotify_Wait::Change, Nil))
+  i = Inotify_Wait.new(*args, &blok)
+
+  STDERR.puts "=== inotifywait #{i.cmd}"
+
+  Signal::INT.trap do
+    i.kill unless i.terminated?
+    Signal::INT.reset
+  end
+
+  while !i.terminated?
+    i.process_a_line
+    Fiber.yield
+  end
+
+  i.flush_remaining
+  i.exit_on_error
+end
 
 
