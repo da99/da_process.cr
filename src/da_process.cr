@@ -29,12 +29,15 @@ module DA_Process
     !is_fail
   end
 
-  def success!(stat)
-    if !success?(stat)
-      STDERR.puts "Exit signal: #{stat.exit_signal}" if stat.signal_exit?
-      Process.exit stat.exit_code
-    end
-    stat
+  def success!(cmd : String, output = STDOUT, error = STDERR, input = Process::Redirect::Close)
+    args = cmd.split
+    success! Process.run(args.shift, args, output: output, error: error, input: input)
+  end
+
+  def success!(stat : Process::Status)
+    return stat if success?(stat)
+    STDERR.puts "Exit signal: #{stat.exit_signal}" if stat.signal_exit?
+    Process.exit stat.exit_code
   end
 
 end # === module DA_Process

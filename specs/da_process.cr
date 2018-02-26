@@ -20,6 +20,10 @@ describe ":success!" do
     assert DA_Process.success!(stat) == stat
   end # === it "works"
 
+  it "runs String argument as command" do
+    assert DA_Process.success!("uptime", output: IO::Memory.new).exit_code == 0
+  end # === it "runs String argument as command"
+
 end # === desc ":success!"
 
 describe ":success?" do
