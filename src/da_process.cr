@@ -28,9 +28,12 @@ struct DA_Process
       !is_fail
     end
 
-    def success!(cmd : String, output = STDOUT, error = STDERR, input = Process::Redirect::Close)
-      args = cmd.split
-      success! Process.run(args.shift, args, output: output, error: error, input: input)
+    def success!(cmd : String, args : Array(String) = [] of String, output = STDOUT, error = STDERR, input = Process::Redirect::Close)
+      if cmd[' ']?
+        args = cmd.split + args
+        cmd = args.shift
+      end
+      success! Process.run(cmd, args, output: output, error: error, input: input)
     end
 
     def success!(stat : Process::Status)
@@ -65,6 +68,10 @@ struct DA_Process
 
   def success?
     self.class.success?(@stat)
+  end
+
+  def success!
+    self.class.success! @stat
   end
 
   def error?

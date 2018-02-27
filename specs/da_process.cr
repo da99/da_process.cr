@@ -24,6 +24,12 @@ describe ":success!" do
     assert DA_Process.success!("uptime", output: IO::Memory.new).exit_code == 0
   end # === it "runs String argument as command"
 
+  it "accepts multplie arguments" do
+    io = IO::Memory.new
+    DA_Process.success!("echo", %w[a b c], output: io)
+    assert io.to_s == "a b c\n"
+  end # === it "accepts multplie arguments"
+
 end # === desc ":success!"
 
 describe ":success?" do
