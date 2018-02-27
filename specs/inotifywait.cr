@@ -37,7 +37,7 @@ describe "Inotify_Wait" do
 
     # === Yield and wait for the
     #     `touch` event to be processed.
-    sleep 0.3
+    sleep 0.4
 
     assert files.includes?("a.txt") == true
   end # === it "loops"

@@ -37,3 +37,30 @@ describe ":success?" do
   end # === it "returns false if process exited non-zero"
 
 end # === desc ":shell_out?"
+
+describe ".new" do
+  it "runs the command" do
+    p = DA_Process.new("uptime")
+    assert p.stat.normal_exit? == true
+  end # === it "runs the command"
+
+  it "sets :success? == true if no error" do
+    p = DA_Process.new("uptime")
+    assert p.success? == true
+  end # === it "sets :success? == true if no error"
+
+  it "sets :error? == true if error" do
+    p = DA_Process.new("sdfsd dfs")
+    assert p.error? == true
+  end # === it "sets :error? == true if error"
+
+  it "records the output" do
+    p = DA_Process.new("echo a b c")
+    assert p.output.to_s == "a b c\n"
+  end # === it "records the output"
+
+  it "records the error output" do
+    p = DA_Process.new("abd242 242")
+    assert p.error.to_s[/execvp: No such file or directory/] == "execvp: No such file or directory"
+  end # === it "records the error output"
+end # === desc ".new"
