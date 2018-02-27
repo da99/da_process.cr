@@ -1,7 +1,7 @@
 
 require "./da_process/*"
 
-class DA_Process
+struct DA_Process
 
   module Class_Methods
     private def capture_output_and_error(cmd : String)
@@ -46,20 +46,17 @@ class DA_Process
   # Instance
   # =============================================================================
 
-  getter output
-  getter error
-  getter input
   getter cmd_name : String
-  getter args : Array(String)
+  getter args     : Array(String)
+  getter output   : IO::Memory
+  getter error    : IO::Memory
+  getter input
   getter stat : Process::Status
 
-  def initialize(
-    @cmd : String,
-    @input = Process::Redirect::Close
-  )
-    @output = o = IO::Memory.new
-    @error  = e = IO::Memory.new
-    @args = cmd.split
+  def initialize(@cmd : String, @input = Process::Redirect::Close)
+    @output   = o = IO::Memory.new
+    @error    = e = IO::Memory.new
+    @args     = cmd.split
     @cmd_name = args.shift
     @stat = Process.run(cmd_name, args, output: o, error: e, input: @input)
     o.rewind
