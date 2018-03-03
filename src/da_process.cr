@@ -51,19 +51,19 @@ struct DA_Process
 
   getter cmd_name : String
   getter args     : Array(String)
-  getter output   : IO::Memory
-  getter error    : IO::Memory
+  getter output   : Process::Stdio
+  getter error    : Process::Stdio
   getter input
   getter stat : Process::Status
 
-  def initialize(@cmd : String, @input = Process::Redirect::Close)
-    @output   = o = IO::Memory.new
-    @error    = e = IO::Memory.new
+  def initialize(@cmd : String, @output = IO::Memory.new, @error = IO::Memory.new, @input = Process::Redirect::Close)
+    o         = @output
+    e         = @error
     @args     = cmd.split
     @cmd_name = args.shift
     @stat = Process.run(cmd_name, args, output: o, error: e, input: @input)
-    o.rewind
-    e.rewind
+    o.rewind if o.is_a?(IO::Memory)
+    e.rewind if e.is_a?(IO::Memory)
   end # === def initialize
 
   def success?
