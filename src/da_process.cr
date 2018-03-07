@@ -72,6 +72,7 @@ struct DA_Process
 
   def success!
     self.class.success! @stat
+    self
   end
 
   def error?

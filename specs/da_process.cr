@@ -30,6 +30,11 @@ describe ":success!" do
     assert io.to_s == "a b c\n"
   end # === it "accepts multplie arguments"
 
+  it "returns instance" do
+    p = DA_Process.new("uptime")
+    assert p.success! == p
+  end # === it "returns instance"
+
 end # === desc ":success!"
 
 describe ":success?" do
