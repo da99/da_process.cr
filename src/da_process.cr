@@ -51,8 +51,8 @@ struct DA_Process
 
   getter cmd_name : String
   getter args     : Array(String)
-  getter output   : Process::Stdio
-  getter error    : Process::Stdio
+  getter output   : IO::Memory
+  getter error    : IO::Memory
   getter input
   getter stat : Process::Status
 
@@ -62,8 +62,8 @@ struct DA_Process
     @args     = cmd.split
     @cmd_name = args.shift
     @stat = Process.run(cmd_name, args, output: o, error: e, input: @input)
-    o.rewind if o.is_a?(IO::Memory)
-    e.rewind if e.is_a?(IO::Memory)
+    o.rewind
+    e.rewind
   end # === def initialize
 
   def success?
