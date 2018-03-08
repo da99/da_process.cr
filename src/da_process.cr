@@ -71,6 +71,9 @@ struct DA_Process
   end
 
   def success!
+    if !success?
+      STDERR.puts error.to_s
+    end
     self.class.success! @stat
     self
   end
