@@ -74,4 +74,9 @@ describe ".new" do
     p = DA_Process.new("abd242 242")
     assert p.error.to_s[/execvp: No such file or directory/] == "execvp: No such file or directory"
   end # === it "records the error output"
+
+  it "accepts args as Array(String)" do
+    p = DA_Process.new("echo",  %w[a b c])
+    assert p.output.to_s == "a b c\n"
+  end
 end # === desc ".new"

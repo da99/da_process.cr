@@ -56,12 +56,13 @@ struct DA_Process
   getter input
   getter stat : Process::Status
 
-  def initialize(@cmd : String, @output = IO::Memory.new, @error = IO::Memory.new, @input = Process::Redirect::Close)
-    o         = @output
-    e         = @error
-    @args     = cmd.split
-    @cmd_name = args.shift
-    @stat = Process.run(cmd_name, args, output: o, error: e, input: @input)
+  def initialize(@cmd : String, raw_args : Array(String) = [] of String, @output = IO::Memory.new, @error = IO::Memory.new, @input = Process::Redirect::Close)
+    o          = @output
+    e          = @error
+    other_args = cmd.split
+    @cmd_name  = other_args.shift
+    @args      = other_args.concat(raw_args)
+    @stat      = Process.run(@cmd_name, @args, output: o, error: e, input: @input)
     o.rewind
     e.rewind
   end # === def initialize
