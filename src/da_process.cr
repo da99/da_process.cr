@@ -73,7 +73,8 @@ struct DA_Process
 
   def success!
     if !success?
-      STDERR.puts error.to_s
+      STDERR.puts error.to_s unless error.empty?
+      STDOUT.puts output.to_s unless output.empty?
     end
     self.class.success! @stat
     self
